@@ -1,61 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Vyaptech Login</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Signup</title>
+
+  <!-- Firebase CDN -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      font-family: Arial;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      background: #f4f4f4;
     }
 
     .box {
       background: white;
       padding: 40px;
+      border-radius: 10px;
       width: 350px;
       text-align: center;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
     }
 
     input {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
     }
 
     button {
       padding: 10px 20px;
       margin: 10px 5px;
       border: none;
-      border-radius: 5px;
+      color: white;
       cursor: pointer;
     }
 
-    .login-btn {
-      background: #007bff;
-      color: white;
-    }
-
-    .signup-btn {
-      background: #28a745;
-      color: white;
-    }
-
-    #msg {
-      margin-top: 15px;
-      color: red;
-    }
+    .login-btn { background: #007bff; }
+    .signup-btn { background: #28a745; }
   </style>
 </head>
+
 <body>
 
 <div class="box">
@@ -64,17 +53,15 @@
   <input type="email" id="email" placeholder="Enter Email">
   <input type="password" id="password" placeholder="Enter Password">
 
+  <br>
+
   <button class="login-btn" onclick="login()">Login</button>
   <button class="signup-btn" onclick="signup()">Sign Up</button>
-
-  <p id="msg"></p>
 </div>
 
-<!-- Firebase v8 CDN -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
 <script>
+
+  // Firebase Config
   var firebaseConfig = {
     apiKey: "AIzaSyAjUM5w0E75_Senlu5zIxUtQOPNE6danNk",
     authDomain: "vyaptech-saas.firebaseapp.com",
@@ -85,24 +72,35 @@
   };
 
   firebase.initializeApp(firebaseConfig);
-  var auth = firebase.auth();
 
   function signup() {
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
 
-    auth.createUserWithEmailAndPassword(email, password)
-      .then(function() {
-        document.getElementById("msg").style.color = "green";
-        document.getElementById("msg").innerText = "Signup Successful!";
-      })
-      .catch(function(error) {
-        document.getElementById("msg").innerText = error.message;
-      });
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then(function() {
+      alert("Signup Successful!");
+    })
+    .catch(function(error) {
+      alert(error.message);
+    });
   }
 
   function login() {
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
 
-    auth.sig
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(function() {
+      alert("Login Successful!");
+      window.location.href = "dashboard.html";
+    })
+    .catch(function(error) {
+      alert(error.message);
+    });
+  }
+
+</script>
+
+</body>
+</html>
