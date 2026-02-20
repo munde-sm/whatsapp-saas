@@ -1,21 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login - Vyaptech</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Vyaptech Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .box {
+      background: white;
+      padding: 40px;
+      width: 350px;
+      text-align: center;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .login-btn {
+      background: #007bff;
+      color: white;
+    }
+
+    .signup-btn {
+      background: #28a745;
+      color: white;
+    }
+
+    #msg {
+      margin-top: 15px;
+      color: red;
+    }
+  </style>
 </head>
 <body>
 
-<div class="auth-box">
+<div class="box">
   <h2>Login / Signup</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <button onclick="signup()">Sign Up</button>
+
+  <input type="email" id="email" placeholder="Enter Email">
+  <input type="password" id="password" placeholder="Enter Password">
+
+  <button class="login-btn" onclick="login()">Login</button>
+  <button class="signup-btn" onclick="signup()">Sign Up</button>
+
   <p id="msg"></p>
 </div>
 
-<!-- Firebase CDN -->
+<!-- Firebase v8 CDN -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
@@ -24,9 +79,9 @@
     apiKey: "AIzaSyAjUM5w0E75_Senlu5zIxUtQOPNE6danNk",
     authDomain: "vyaptech-saas.firebaseapp.com",
     projectId: "vyaptech-saas",
-    storageBucket: "vyaptech-saas.appspot.com",
+    storageBucket: "vyaptech-saas.firebasestorage.app",
     messagingSenderId: "911108552998",
-    appId: "1:911108552998:web:db0c532906371181b829e7",
+    appId: "1:911108552998:web:db0c532906371181b829e7"
   };
 
   firebase.initializeApp(firebaseConfig);
@@ -38,6 +93,7 @@
 
     auth.createUserWithEmailAndPassword(email, password)
       .then(function() {
+        document.getElementById("msg").style.color = "green";
         document.getElementById("msg").innerText = "Signup Successful!";
       })
       .catch(function(error) {
@@ -49,15 +105,4 @@
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
 
-    auth.signInWithEmailAndPassword(email, password)
-      .then(function() {
-        window.location.href = "dashboard.html";
-      })
-      .catch(function(error) {
-        document.getElementById("msg").innerText = error.message;
-      });
-  }
-</script>
-
-</body>
-</html>
+    auth.sig
