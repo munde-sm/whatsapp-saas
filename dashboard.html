@@ -1,3 +1,27 @@
+<script type="module">
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const auth = getAuth();
+
+onAuthStateChanged(auth, (user)=>{
+  if(!user){
+    window.location.href = "login.html";
+  }
+});
+</script>
+<script type="module">
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const db = getFirestore();
+
+async function saveUser(uid,email){
+  await setDoc(doc(db,"users",uid),{
+    email: email,
+    plan: "free",
+    created: new Date()
+  });
+}
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -627,6 +651,7 @@ select.form-input option{background:var(--surface2);}
           <div class="reseller-stat"><span>Revenue</span><span class="reseller-stat-val">₹62,400</span></div>
           <div class="reseller-stat"><span>Commission</span><span class="reseller-stat-val">₹9,360</span></div>
           <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:12px;">Manage</button>
+          <button onclick="payNow()">Upgrade Plan</button>
         </div>
         <div class="reseller-card">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
@@ -795,6 +820,57 @@ document.querySelector('.chat-input').addEventListener('keydown', function(e) {
     this.value = '';
   }
 });
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+function payNow(){
+  var options = {
+    key: "YOUR_RAZORPAY_KEY",
+    amount: 99900, // ₹999
+    currency: "INR",
+    name: "Vyaptech SaaS",
+    description: "Pro Plan",
+    handler: function (response){
+      alert("Payment Success: " + response.razorpay_payment_id);
+    }
+  };
+  var rzp = new Razorpay(options);
+  rzp.open();
+}
+</script>
 </script>
 </body>
 </html>
+<button onclick="sendMsg()">Send WhatsApp</button>
+<script>
+function sendMsg(){
+  fetch("https://graph.facebook.com/v19.0/YOUR_PHONE_ID/messages", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_TOKEN",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      to: "91XXXXXXXXXX",
+      type: "text",
+      text: { body: "Hello from Vyaptech 🚀" }
+    })
+  })
+  .then(res=>res.json())
+  .then(data=>alert("Sent!"))
+}
+</script>
+<script type="module">
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const db = getFirestore();
+
+async function saveUser(uid,email){
+  await setDoc(doc(db,"users",uid),{
+    email: email,
+    plan: "free",
+    created: new Date()
+  });
+}
+</script>
