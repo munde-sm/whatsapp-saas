@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vyaptech — WhatsApp SaaS Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0d0f10;
+  --surface: #141618;
+  --surface2: #1c1f21;
+  --surface3: #232628;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --green: #25d366;
+  --green2: #128c7e;
+  --green-dim: rgba(37,211,102,0.12);
+  --green-dim2: rgba(37,211,102,0.07);
+  --text: #f0f0ee;
+  --muted: #8b8b89;
+  --muted2: #5a5a58;
+  --accent: #25d366;
+  --red: #ff4d4d;
+  --amber: #ffb020;
+  --blue: #4d9fff;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;line-height:1.6;overflow-x:hidden;display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .25s;}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:20px;height:20px;fill:#fff;}
+.logo-text{font-size:16px;font-weight:700;letter-spacing:-0.3px;}
+.logo-text span{color:var(--green);}
+
+.sidebar-section{padding:12px 10px 4px;font-size:10px;font-weight:600;letter-spacing:0.1em;color:var(--muted2);text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;margin:1px 8px;border-radius:var(--radius-sm);cursor:pointer;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;position:relative;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--green-dim);color:var(--green);}
+.nav-item .nav-icon{width:16px;height:16px;opacity:0.7;flex-shrink:0;}
+.nav-item.active .nav-icon{opacity:1;}
+.nav-badge{margin-left:auto;background:var(--green);color:#0d0f10;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;}
+.nav-badge.red{background:var(--red);}
+
+.sidebar-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border);}
+.user-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--radius-sm);cursor:pointer;transition:background .15s;}
+.user-row:hover{background:var(--surface2);}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--green-dim);border:1.5px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--green);flex-shrink:0;}
+.user-name{font-size:13px;font-weight:600;}
+.user-role{font-size:11px;color:var(--muted);}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;min-height:100vh;display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:40;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.page-title{font-size:16px;font-weight:700;letter-spacing:-0.3px;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.icon-btn{width:34px;height:34px;border-radius:var(--radius-sm);background:transparent;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all .15s;}
+.icon-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+.notif-dot{position:relative;}
+.notif-dot::after{content:'';position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1.5px solid var(--surface);}
+
+/* CONTENT */
+.content{padding:24px;flex:1;}
+
+/* PANELS — each section */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* STATS ROW */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;transition:border-color .2s;}
+.stat-card:hover{border-color:var(--border2);}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.stat-label{font-size:12px;color:var(--muted);font-weight:500;}
+.stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.stat-icon.green{background:var(--green-dim);}
+.stat-icon.blue{background:rgba(77,159,255,0.1);}
+.stat-icon.amber{background:rgba(255,176,32,0.1);}
+.stat-icon.red{background:rgba(255,77,77,0.1);}
+.stat-num{font-size:26px;font-weight:700;letter-spacing:-1px;line-height:1;}
+.stat-delta{font-size:12px;margin-top:4px;}
+.stat-delta.up{color:#25d366;}
+.stat-delta.down{color:var(--red);}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-size:15px;font-weight:700;}
+.btn{padding:8px 16px;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;border:none;}
+.btn-primary{background:var(--green);color:#0d0f10;}
+.btn-primary:hover{opacity:0.88;}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+
+/* TABLE */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;}
+table{width:100%;border-collapse:collapse;}
+thead{background:var(--surface2);}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);}
+td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.tag-green{background:rgba(37,211,102,0.12);color:#25d366;}
+.tag-amber{background:rgba(255,176,32,0.1);color:#ffb020;}
+.tag-red{background:rgba(255,77,77,0.1);color:#ff4d4d;}
+.tag-blue{background:rgba(77,159,255,0.1);color:#4d9fff;}
+.tag-gray{background:rgba(255,255,255,0.06);color:var(--muted);}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:20px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .2s;}
+.card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.card-title{font-size:14px;font-weight:700;margin-bottom:6px;}
+.card-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.card-footer{margin-top:14px;display:flex;align-items:center;justify-content:space-between;}
+.progress-bar{height:4px;background:var(--surface3);border-radius:2px;margin-top:10px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;}
+
+/* CHAT PANEL */
+.chat-layout{display:grid;grid-template-columns:300px 1fr;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;height:560px;}
+.chat-list{border-right:1px solid var(--border);overflow-y:auto;}
+.chat-list-header{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;}
+.chat-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;display:flex;gap:10px;align-items:flex-start;}
+.chat-item:hover{background:var(--surface2);}
+.chat-item.active{background:var(--green-dim2);border-left:2px solid var(--green);}
+.chat-avatar{width:36px;height:36px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.chat-name{font-size:13px;font-weight:600;}
+.chat-preview{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;}
+.chat-time{font-size:11px;color:var(--muted2);margin-left:auto;flex-shrink:0;}
+.chat-unread{background:var(--green);color:#0d0f10;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+.chat-main{display:flex;flex-direction:column;}
+.chat-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.chat-status{width:8px;height:8px;background:var(--green);border-radius:50;flex-shrink:0;}
+.chat-messages{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+.msg{max-width:65%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5;}
+.msg-in{background:var(--surface2);border-radius:4px 12px 12px 12px;align-self:flex-start;}
+.msg-out{background:var(--green-dim);border:1px solid rgba(37,211,102,0.2);border-radius:12px 4px 12px 12px;align-self:flex-end;}
+.msg-time{font-size:10px;color:var(--muted2);margin-top:4px;text-align:right;}
+.chat-input-row{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;}
+.chat-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:9px 16px;font-family:inherit;font-size:13px;color:var(--text);outline:none;}
+.chat-input:focus{border-color:rgba(37,211,102,0.3);}
+.send-btn{width:36px;height:36px;background:var(--green);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-size:12px;font-weight:600;color:var(--muted);}
+.form-input{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-family:inherit;font-size:13px;color:var(--text);outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:rgba(37,211,102,0.4);}
+textarea.form-input{resize:vertical;min-height:90px;}
+select.form-input option{background:var(--surface2);}
+
+/* RESELLER */
+.reseller-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.reseller-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
+.reseller-name{font-size:14px;font-weight:700;margin-bottom:4px;}
+.reseller-plan{font-size:11px;color:var(--muted);margin-bottom:12px;}
+.reseller-stat{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);}
+.reseller-stat:last-of-type{border:none;}
+.reseller-stat-val{font-weight:600;color:var(--green);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .main{margin-left:0;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .chat-layout{grid-template-columns:1fr;}
+  .chat-list{display:none;}
+  .form-grid{grid-template-columns:1fr;}
+}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.panel.active{animation:fadeIn .2s ease both;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.537 4.049 1.475 5.754L.057 23.07a.75.75 0 00.916.914l5.34-1.406A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.944 9.944 0 01-5.065-1.377l-.364-.217-3.77.993 1.009-3.678-.237-.378A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    </div>
+    <div class="logo-text">Vyap<span>tech</span></div>
+  </div>
+
+  <div class="sidebar-section">Main</div>
+  <div class="nav-item active" onclick="showPanel('dashboard',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item" onclick="showPanel('broadcast',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.22 1.18 2 2 0 012.2 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.28-.54a2 2 0 012.11.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    Bulk Broadcast
+    <span class="nav-badge">New</span>
+  </div>
+  <div class="nav-item" onclick="showPanel('chat',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+    Live Chat
+    <span class="nav-badge red">5</span>
+  </div>
+  <div class="nav-item" onclick="showPanel('crm',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+    CRM Contacts
+  </div>
+  <div class="nav-item" onclick="showPanel('automation',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    Automation
+  </div>
+
+  <div class="sidebar-section">Business</div>
+  <div class="nav-item" onclick="showPanel('reseller',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    Reseller Panel
+  </div>
+  <div class="nav-item" onclick="showPanel('templates',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+    Templates
+  </div>
+  <div class="nav-item" onclick="showPanel('analytics',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Analytics
+  </div>
+
+  <div class="sidebar-section">Settings</div>
+  <div class="nav-item" onclick="showPanel('settings',this)">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    API Settings
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-row">
+      <div class="avatar">VT</div>
+      <div>
+        <div class="user-name">Vyaptech Admin</div>
+        <div class="user-role">Super Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title" id="page-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn notif-dot" title="Notifications">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+      </div>
+      <div class="icon-btn" title="Help">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </div>
+      <div style="width:32px;height:32px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#0d0f10;cursor:pointer;">VT</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD PANEL -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-label">Messages Sent</div><div class="stat-icon green">💬</div></div>
+          <div class="stat-num">48,291</div>
+          <div class="stat-delta up">↑ 12% this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-label">Active Contacts</div><div class="stat-icon blue">👥</div></div>
+          <div class="stat-num">3,847</div>
+          <div class="stat-delta up">↑ 243 new today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-label">Delivery Rate</div><div class="stat-icon green">✅</div></div>
+          <div class="stat-num">98.4%</div>
+          <div class="stat-delta up">↑ Excellent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-label">Open Tickets</div><div class="stat-icon red">🎫</div></div>
+          <div class="stat-num">12</div>
+          <div class="stat-delta down">↑ 3 urgent</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+        <div class="table-wrap">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700;">Recent Campaigns</div>
+          <table>
+            <thead><tr><th>Campaign</th><th>Sent</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Diwali Offer 2025</td><td>12,400</td><td><span class="tag tag-green">Live</span></td></tr>
+              <tr><td>New Product Launch</td><td>8,200</td><td><span class="tag tag-green">Done</span></td></tr>
+              <tr><td>Re-engagement</td><td>5,100</td><td><span class="tag tag-amber">Paused</span></td></tr>
+              <tr><td>Cart Abandonment</td><td>3,300</td><td><span class="tag tag-blue">Scheduled</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700;">Reseller Activity</div>
+          <table>
+            <thead><tr><th>Reseller</th><th>Clients</th><th>Revenue</th></tr></thead>
+            <tbody>
+              <tr><td>DigiSell India</td><td>34</td><td style="color:var(--green);">₹84,000</td></tr>
+              <tr><td>BizBoost</td><td>28</td><td style="color:var(--green);">₹62,400</td></tr>
+              <tr><td>TechPartners</td><td>19</td><td style="color:var(--green);">₹41,800</td></tr>
+              <tr><td>QuickSaaS</td><td>11</td><td style="color:var(--amber);">₹24,200</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Quick Actions</div>
+      </div>
+      <div class="cards-grid">
+        <div class="card" onclick="showPanel('broadcast',document.querySelector('[onclick*=broadcast]'))">
+          <div style="font-size:24px;margin-bottom:10px;">📢</div>
+          <div class="card-title">Send Bulk Broadcast</div>
+          <div class="card-desc">Send WhatsApp messages to thousands of contacts in one click using approved templates.</div>
+          <div class="card-footer"><span class="tag tag-green">Ready</span><button class="btn btn-primary btn-sm">Launch</button></div>
+        </div>
+        <div class="card" onclick="showPanel('crm',document.querySelector('[onclick*=crm]'))">
+          <div style="font-size:24px;margin-bottom:10px;">👤</div>
+          <div class="card-title">Manage CRM Contacts</div>
+          <div class="card-desc">Import, segment, and manage your customer contacts. Add tags, notes, and custom fields.</div>
+          <div class="card-footer"><span class="tag tag-blue">3,847 contacts</span><button class="btn btn-ghost btn-sm">Open</button></div>
+        </div>
+        <div class="card" onclick="showPanel('automation',document.querySelector('[onclick*=automation]'))">
+          <div style="font-size:24px;margin-bottom:10px;">⚡</div>
+          <div class="card-title">Setup Automation</div>
+          <div class="card-desc">Auto-reply bots, drip campaigns, keyword triggers, and webhook integrations.</div>
+          <div class="card-footer"><span class="tag tag-amber">4 active flows</span><button class="btn btn-ghost btn-sm">Edit</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BROADCAST PANEL -->
+    <div class="panel" id="panel-broadcast">
+      <div class="section-header">
+        <div class="section-title">New Bulk Broadcast</div>
+        <button class="btn btn-primary">Send Campaign</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 360px;gap:16px;">
+        <div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:14px;">Campaign Details</div>
+            <div class="form-grid">
+              <div class="form-group full">
+                <label class="form-label">Campaign Name</label>
+                <input class="form-input" type="text" placeholder="e.g. Diwali Sale 2025"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Select Template</label>
+                <select class="form-input">
+                  <option>Welcome Message</option>
+                  <option>Sale Announcement</option>
+                  <option>Order Confirmation</option>
+                  <option>Reminder</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Schedule</label>
+                <input class="form-input" type="datetime-local"/>
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Message Preview</label>
+                <textarea class="form-input" placeholder="Namaste {{name}}! Aapke liye special offer hai...">Namaste {{name}}! 🎉 Vyaptech ki taraf se aapko special Diwali offer — 30% off sabhi plans pe. Offer sirf aaj tak valid hai!</textarea>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:14px;">Select Audience</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="tag tag-green" style="cursor:pointer;padding:6px 12px;">All Contacts (3,847)</span>
+              <span class="tag tag-blue" style="cursor:pointer;padding:6px 12px;">Premium (892)</span>
+              <span class="tag tag-amber" style="cursor:pointer;padding:6px 12px;">Inactive 30d (1,204)</span>
+              <span class="tag tag-gray" style="cursor:pointer;padding:6px 12px;">Maharashtra (543)</span>
+              <span class="tag tag-gray" style="cursor:pointer;padding:6px 12px;">New (243)</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:14px;">📱 Message Preview</div>
+            <div style="background:#0b1c10;border-radius:10px;padding:16px;min-height:200px;">
+              <div style="background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.2);border-radius:4px 12px 12px 12px;padding:12px 14px;font-size:13px;line-height:1.6;max-width:90%;">
+                Namaste Rahul! 🎉 Vyaptech ki taraf se aapko special Diwali offer — 30% off sabhi plans pe. Offer sirf aaj tak valid hai!
+                <div style="font-size:10px;color:var(--muted2);margin-top:6px;text-align:right;">10:30 AM ✓✓</div>
+              </div>
+            </div>
+            <div style="margin-top:14px;font-size:12px;color:var(--muted);">
+              <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);">Recipients <strong style="color:var(--text);">3,847</strong></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);">Est. Cost <strong style="color:var(--amber);">₹1,154</strong></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;">Est. Delivery <strong style="color:var(--green);">~15 min</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE CHAT PANEL -->
+    <div class="panel" id="panel-chat">
+      <div class="section-header">
+        <div class="section-title">Live Chat Support</div>
+        <div style="display:flex;gap:8px;">
+          <span class="tag tag-green">● 5 Online Agents</span>
+          <button class="btn btn-ghost btn-sm">Assign Rules</button>
+        </div>
+      </div>
+      <div class="chat-layout">
+        <div class="chat-list">
+          <div class="chat-list-header">Conversations <span class="tag tag-red" style="margin-left:6px;">5 new</span></div>
+          <div class="chat-item active">
+            <div class="chat-avatar">RK</div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;justify-content:space-between;"><div class="chat-name">Rahul Kumar</div><div class="chat-time">2m</div></div>
+              <div class="chat-preview">Mujhe plan upgrade karna hai...</div>
+            </div>
+            <div class="chat-unread">3</div>
+          </div>
+          <div class="chat-item">
+            <div class="chat-avatar">PS</div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;justify-content:space-between;"><div class="chat-name">Priya Sharma</div><div class="chat-time">8m</div></div>
+              <div class="chat-preview">API integration help chahiye</div>
+            </div>
+            <div class="chat-unread">1</div>
+          </div>
+          <div class="chat-item">
+            <div class="chat-avatar">AM</div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;justify-content:space-between;"><div class="chat-name">Arjun Mehta</div><div class="chat-time">15m</div></div>
+              <div class="chat-preview">Broadcast failed ho raha hai</div>
+            </div>
+          </div>
+          <div class="chat-item">
+            <div class="chat-avatar">SD</div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;justify-content:space-between;"><div class="chat-name">Sunita Desai</div><div class="chat-time">32m</div></div>
+              <div class="chat-preview">Invoice download karna hai</div>
+            </div>
+          </div>
+          <div class="chat-item">
+            <div class="chat-avatar">VB</div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;justify-content:space-between;"><div class="chat-name">Vijay Bhatia</div><div class="chat-time">1h</div></div>
+              <div class="chat-preview">Reseller account setup karo</div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-main">
+          <div class="chat-header">
+            <div class="chat-avatar" style="width:32px;height:32px;font-size:12px;">RK</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;">Rahul Kumar</div>
+              <div style="font-size:11px;color:var(--green);">● Online</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:6px;">
+              <button class="btn btn-ghost btn-sm">Assign</button>
+              <button class="btn btn-ghost btn-sm">Resolve</button>
+            </div>
+          </div>
+          <div class="chat-messages">
+            <div class="msg msg-in">Namaste! Mujhe Pro plan pe upgrade karna hai, kaise karo?<div class="msg-time">10:28 AM</div></div>
+            <div class="msg msg-out">Namaste Rahul ji! Pro plan ke liye Settings → Billing mein jaayein aur "Upgrade" dabayein. Koi dikkat ho toh batao!<div class="msg-time">10:29 AM ✓✓</div></div>
+            <div class="msg msg-in">Payment failed ho raha hai, UPI try kiya tha<div class="msg-time">10:30 AM</div></div>
+            <div class="msg msg-out">Samajh gaya. Aap Razorpay link se try karein: pay.vyaptech.com/upgrade — yahan sabhi payment methods available hain.<div class="msg-time">10:31 AM ✓✓</div></div>
+            <div class="msg msg-in">Ok thank you! Try karta hoon 🙏<div class="msg-time">10:32 AM</div></div>
+          </div>
+          <div class="chat-input-row">
+            <input class="chat-input" type="text" placeholder="Message likho... (Enter to send)"/>
+            <div class="send-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d0f10" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CRM PANEL -->
+    <div class="panel" id="panel-crm">
+      <div class="section-header">
+        <div class="section-title">CRM — Contacts</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm">Import CSV</button>
+          <button class="btn btn-primary btn-sm">+ Add Contact</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <input class="form-input" style="max-width:260px;" type="text" placeholder="Search contacts..."/>
+        <select class="form-input" style="max-width:160px;"><option>All Tags</option><option>Premium</option><option>Lead</option><option>Customer</option></select>
+        <select class="form-input" style="max-width:160px;"><option>All Status</option><option>Active</option><option>Inactive</option><option>Blocked</option></select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>WhatsApp</th><th>Tag</th><th>Last Message</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Rahul Kumar</strong></td><td>+91 98765 43210</td><td><span class="tag tag-green">Premium</span></td><td>Today, 10:32 AM</td><td><span class="tag tag-green">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td><strong>Priya Sharma</strong></td><td>+91 87654 32109</td><td><span class="tag tag-blue">Lead</span></td><td>Today, 10:08 AM</td><td><span class="tag tag-green">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td><strong>Arjun Mehta</strong></td><td>+91 76543 21098</td><td><span class="tag tag-amber">Trial</span></td><td>Today, 9:45 AM</td><td><span class="tag tag-amber">Trial</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td><strong>Sunita Desai</strong></td><td>+91 65432 10987</td><td><span class="tag tag-green">Customer</span></td><td>Yesterday</td><td><span class="tag tag-green">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td><strong>Vijay Bhatia</strong></td><td>+91 54321 09876</td><td><span class="tag tag-blue">Reseller</span></td><td>Yesterday</td><td><span class="tag tag-green">Active</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td><strong>Meena Joshi</strong></td><td>+91 43210 98765</td><td><span class="tag tag-gray">Cold</span></td><td>3 days ago</td><td><span class="tag tag-red">Inactive</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--muted);text-align:center;">Showing 6 of 3,847 contacts</div>
+    </div>
+
+    <!-- AUTOMATION PANEL -->
+    <div class="panel" id="panel-automation">
+      <div class="section-header">
+        <div class="section-title">Automation Flows</div>
+        <button class="btn btn-primary">+ New Flow</button>
+      </div>
+      <div class="cards-grid">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div style="font-size:20px;">👋</div>
+            <span class="tag tag-green">Active</span>
+          </div>
+          <div class="card-title">Welcome Bot</div>
+          <div class="card-desc">Naye contact ko automatic welcome message + product info bhejta hai.</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:87%"></div></div>
+          <div class="card-footer"><span style="font-size:11px;color:var(--muted);">1,204 triggered</span><button class="btn btn-ghost btn-sm">Edit</button></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div style="font-size:20px;">🛒</div>
+            <span class="tag tag-green">Active</span>
+          </div>
+          <div class="card-title">Cart Recovery</div>
+          <div class="card-desc">3 ghante baad cart abandon pe reminder message bhejta hai.</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div>
+          <div class="card-footer"><span style="font-size:11px;color:var(--muted);">432 triggered</span><button class="btn btn-ghost btn-sm">Edit</button></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div style="font-size:20px;">⭐</div>
+            <span class="tag tag-amber">Paused</span>
+          </div>
+          <div class="card-title">Review Request</div>
+          <div class="card-desc">Order deliver hone ke 24 ghante baad review maangta hai.</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:45%;background:var(--amber);"></div></div>
+          <div class="card-footer"><span style="font-size:11px;color:var(--muted);">89 triggered</span><button class="btn btn-ghost btn-sm">Resume</button></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div style="font-size:20px;">🔁</div>
+            <span class="tag tag-green">Active</span>
+          </div>
+          <div class="card-title">Re-engagement Drip</div>
+          <div class="card-desc">30 din se inactive contacts ko 3-part drip sequence bhejta hai.</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:73%"></div></div>
+          <div class="card-footer"><span style="font-size:11px;color:var(--muted);">318 triggered</span><button class="btn btn-ghost btn-sm">Edit</button></div>
+        </div>
+        <div class="card" style="border-style:dashed;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;min-height:140px;">
+          <div style="font-size:28px;color:var(--muted2);">+</div>
+          <div style="font-size:13px;color:var(--muted);">New Automation Flow</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESELLER PANEL -->
+    <div class="panel" id="panel-reseller">
+      <div class="section-header">
+        <div class="section-title">Reseller Management</div>
+        <button class="btn btn-primary">+ Add Reseller</button>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-label">Total Resellers</div><div class="stat-icon blue">🤝</div></div>
+          <div class="stat-num">24</div>
+          <div class="stat-delta up">↑ 3 this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-label">Total Clients (via)</div><div class="stat-icon green">👥</div></div>
+          <div class="stat-num">892</div>
+          <div class="stat-delta up">↑ Active billing</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top"><div class="stat-label">Monthly Revenue</div><div class="stat-icon amber">💰</div></div>
+          <div class="stat-num">₹2.1L</div>
+          <div class="stat-delta up">↑ 18% vs last month</div>
+        </div>
+      </div>
+      <div class="reseller-grid">
+        <div class="reseller-card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div class="avatar" style="background:rgba(77,159,255,0.1);color:var(--blue);border-color:var(--blue);">DS</div>
+            <div><div class="reseller-name">DigiSell India</div><div class="reseller-plan">White-label Plan</div></div>
+            <span class="tag tag-green" style="margin-left:auto;">Active</span>
+          </div>
+          <div class="reseller-stat"><span>Clients</span><span class="reseller-stat-val">34</span></div>
+          <div class="reseller-stat"><span>Msgs/month</span><span class="reseller-stat-val">1.2L</span></div>
+          <div class="reseller-stat"><span>Revenue</span><span class="reseller-stat-val">₹84,000</span></div>
+          <div class="reseller-stat"><span>Commission</span><span class="reseller-stat-val">₹12,600</span></div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:12px;">Manage</button>
+        </div>
+        <div class="reseller-card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div class="avatar" style="background:rgba(37,211,102,0.1);color:var(--green);border-color:var(--green);">BB</div>
+            <div><div class="reseller-name">BizBoost</div><div class="reseller-plan">Standard Plan</div></div>
+            <span class="tag tag-green" style="margin-left:auto;">Active</span>
+          </div>
+          <div class="reseller-stat"><span>Clients</span><span class="reseller-stat-val">28</span></div>
+          <div class="reseller-stat"><span>Msgs/month</span><span class="reseller-stat-val">89,000</span></div>
+          <div class="reseller-stat"><span>Revenue</span><span class="reseller-stat-val">₹62,400</span></div>
+          <div class="reseller-stat"><span>Commission</span><span class="reseller-stat-val">₹9,360</span></div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:12px;">Manage</button>
+        </div>
+        <div class="reseller-card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <div class="avatar" style="background:rgba(255,176,32,0.1);color:var(--amber);border-color:var(--amber);">TP</div>
+            <div><div class="reseller-name">TechPartners</div><div class="reseller-plan">White-label Plan</div></div>
+            <span class="tag tag-amber" style="margin-left:auto;">Renewal Due</span>
+          </div>
+          <div class="reseller-stat"><span>Clients</span><span class="reseller-stat-val">19</span></div>
+          <div class="reseller-stat"><span>Msgs/month</span><span class="reseller-stat-val">54,000</span></div>
+          <div class="reseller-stat"><span>Revenue</span><span class="reseller-stat-val">₹41,800</span></div>
+          <div class="reseller-stat"><span>Commission</span><span class="reseller-stat-val">₹6,270</span></div>
+          <button class="btn btn-primary btn-sm" style="width:100%;margin-top:12px;">Renew</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMPLATES PANEL -->
+    <div class="panel" id="panel-templates">
+      <div class="section-header">
+        <div class="section-title">Message Templates</div>
+        <button class="btn btn-primary">+ New Template</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Template Name</th><th>Category</th><th>Language</th><th>Status</th><th>Used</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>welcome_message</strong></td><td>Marketing</td><td>Hindi</td><td><span class="tag tag-green">Approved</span></td><td>2,341</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><strong>order_confirmation</strong></td><td>Utility</td><td>English</td><td><span class="tag tag-green">Approved</span></td><td>1,892</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><strong>sale_announcement</strong></td><td>Marketing</td><td>Hindi</td><td><span class="tag tag-green">Approved</span></td><td>1,204</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><strong>payment_reminder</strong></td><td>Utility</td><td>Hindi+Eng</td><td><span class="tag tag-amber">Pending</span></td><td>0</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><strong>support_response</strong></td><td>Service</td><td>Hindi</td><td><span class="tag tag-green">Approved</span></td><td>892</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ANALYTICS PANEL -->
+    <div class="panel" id="panel-analytics">
+      <div class="section-header">
+        <div class="section-title">Analytics & Reports</div>
+        <div style="display:flex;gap:8px;">
+          <select class="form-input" style="max-width:140px;padding:7px 12px;"><option>Last 7 days</option><option>Last 30 days</option><option>This month</option></select>
+          <button class="btn btn-ghost btn-sm">Export CSV</button>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Messages Sent</div><div class="stat-icon green">📤</div></div><div class="stat-num">48,291</div><div class="stat-delta up">↑ 12%</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Delivered</div><div class="stat-icon green">✅</div></div><div class="stat-num">47,518</div><div class="stat-delta up">98.4% rate</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Read</div><div class="stat-icon blue">👁</div></div><div class="stat-num">31,204</div><div class="stat-delta up">65.7% open rate</div></div>
+        <div class="stat-card"><div class="stat-top"><div class="stat-label">Replies</div><div class="stat-icon amber">💬</div></div><div class="stat-num">8,942</div><div class="stat-delta up">18.5% reply rate</div></div>
+      </div>
+      <div class="table-wrap">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:700;">Campaign Performance</div>
+        <table>
+          <thead><tr><th>Campaign</th><th>Sent</th><th>Delivered</th><th>Read</th><th>Replied</th><th>ROI</th></tr></thead>
+          <tbody>
+            <tr><td>Diwali Offer 2025</td><td>12,400</td><td>12,214 (98.5%)</td><td>8,940 (72.1%)</td><td>2,104 (17%)</td><td style="color:var(--green);">+340%</td></tr>
+            <tr><td>New Product Launch</td><td>8,200</td><td>8,036 (98%)</td><td>5,120 (62.4%)</td><td>1,240 (15.1%)</td><td style="color:var(--green);">+210%</td></tr>
+            <tr><td>Re-engagement</td><td>5,100</td><td>4,998 (98%)</td><td>2,890 (56.7%)</td><td>540 (10.6%)</td><td style="color:var(--amber);">+87%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SETTINGS PANEL -->
+    <div class="panel" id="panel-settings">
+      <div class="section-header">
+        <div class="section-title">API & Account Settings</div>
+        <button class="btn btn-primary">Save Changes</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:16px;">WhatsApp Business API</div>
+          <div class="form-grid" style="grid-template-columns:1fr;">
+            <div class="form-group">
+              <label class="form-label">Phone Number ID</label>
+              <input class="form-input" type="text" value="1234567890123456" placeholder="Meta Phone Number ID"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Business Account ID (WABA)</label>
+              <input class="form-input" type="text" value="9876543210987654" placeholder="WhatsApp Business Account ID"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Access Token</label>
+              <input class="form-input" type="password" value="EAAxxxxxxxxxxxxxxxxxxxxxxx" placeholder="Meta API Access Token"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Webhook Verify Token</label>
+              <input class="form-input" type="text" value="vyaptech_webhook_2025" placeholder="Your verify token"/>
+            </div>
+          </div>
+          <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-top:4px;">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">Webhook URL (copy karke Meta mein daalein)</div>
+            <div style="font-family:monospace;font-size:12px;color:var(--green);word-break:break-all;">https://app.vyaptech.com/api/webhook</div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Business Profile</div>
+          <div class="form-grid" style="grid-template-columns:1fr;">
+            <div class="form-group">
+              <label class="form-label">Business Name</label>
+              <input class="form-input" type="text" value="Vyaptech" placeholder="Your business name"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Support Email</label>
+              <input class="form-input" type="email" value="support@vyaptech.com" placeholder="support@yourcompany.com"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Default Language</label>
+              <select class="form-input">
+                <option>Hindi + English</option>
+                <option>English only</option>
+                <option>Hindi only</option>
+                <option>Marathi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Timezone</label>
+              <select class="form-input">
+                <option>Asia/Kolkata (IST)</option>
+                <option>UTC</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--green-dim);border-radius:var(--radius-sm);">
+            <span style="font-size:13px;color:var(--green);">● API Connected — Meta Verified</span>
+            <span class="tag tag-green">Live</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const panels = {
+  dashboard: 'Dashboard',
+  broadcast: 'Bulk Broadcast',
+  chat: 'Live Chat',
+  crm: 'CRM — Contacts',
+  automation: 'Automation Flows',
+  reseller: 'Reseller Panel',
+  templates: 'Message Templates',
+  analytics: 'Analytics',
+  settings: 'API Settings'
+};
+
+function showPanel(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const panel = document.getElementById('panel-' + name);
+  if (panel) panel.classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = panels[name] || name;
+}
+
+document.querySelector('.chat-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim()) {
+    const msgs = document.querySelector('.chat-messages');
+    const div = document.createElement('div');
+    div.className = 'msg msg-out';
+    div.innerHTML = this.value + '<div class="msg-time">Just now ✓</div>';
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+    this.value = '';
+  }
+});
+</script>
+</body>
+</html>
