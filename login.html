@@ -1,106 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login / Signup</title>
-
-  <!-- Firebase CDN -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
-  <style>
-    body {
-      font-family: Arial;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #f4f4f4;
-    }
-
-    .box {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      width: 350px;
-      text-align: center;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-    }
-
-    button {
-      padding: 10px 20px;
-      margin: 10px 5px;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-
-    .login-btn { background: #007bff; }
-    .signup-btn { background: #28a745; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vyaptech — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);}
+.login-wrap{display:grid;grid-template-columns:1fr 1fr;max-width:900px;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+.login-left{background:linear-gradient(145deg,#0a1f10 0%,#0d2b16 60%,#0a1a0e 100%);padding:48px 40px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;}
+.login-left::before{content:'';position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(37,211,102,0.12) 0%,transparent 65%);top:-60px;right:-60px;pointer-events:none;}
+.login-left::after{content:'';position:absolute;width:200px;height:200px;background:radial-gradient(circle,rgba(37,211,102,0.07) 0%,transparent 65%);bottom:40px;left:20px;pointer-events:none;}
+.login-brand{display:flex;align-items:center;gap:10px;}
+.login-brand-icon{width:40px;height:40px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.login-brand-icon svg{width:22px;height:22px;fill:#fff;}
+.login-brand-name{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px;}
+.login-brand-name span{color:var(--green);}
+.login-tagline{margin-top:auto;}
+.login-tagline h2{font-size:28px;font-weight:700;color:#fff;line-height:1.2;letter-spacing:-0.5px;margin-bottom:12px;}
+.login-tagline h2 span{color:var(--green);}
+.login-tagline p{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.6;}
+.login-features{display:flex;flex-direction:column;gap:10px;margin-top:28px;}
+.login-feature{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.6);}
+.login-feature-dot{width:6px;height:6px;background:var(--green);border-radius:50%;flex-shrink:0;}
+.login-right{padding:48px 40px;display:flex;flex-direction:column;justify-content:center;}
+.login-right h3{font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-0.3px;}
+.login-right p{font-size:14px;color:var(--muted);margin-bottom:28px;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.form-label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.03em;}
+.form-input{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;font-family:inherit;font-size:14px;color:var(--text);outline:none;transition:border-color .2s,background .2s;width:100%;}
+.form-input:focus{border-color:rgba(37,211,102,0.4);background:var(--surface3);}
+.form-input::placeholder{color:var(--muted2);}
+.forgot{font-size:12px;color:var(--green);text-align:right;margin-top:-10px;margin-bottom:16px;cursor:pointer;text-decoration:none;display:block;}
+.login-btn{width:100%;background:var(--green);color:#0d0f10;border:none;border-radius:var(--radius-sm);padding:13px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s;margin-bottom:16px;}
+.login-btn:hover{opacity:0.88;transform:translateY(-1px);}
+.divider{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.divider-line{flex:1;height:1px;background:var(--border);}
+.divider-text{font-size:12px;color:var(--muted2);}
+.register-link{text-align:center;font-size:13px;color:var(--muted);}
+.register-link a{color:var(--green);font-weight:600;text-decoration:none;}
+.demo-box{background:var(--green-dim);border:1px solid rgba(37,211,102,0.2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--muted);}
+.demo-box strong{color:var(--green);}
+@media(max-width:640px){.login-wrap{grid-template-columns:1fr;}.login-left{display:none;}.login-right{padding:32px 24px;}}
+</style>
 </head>
-
 <body>
-
-<div class="box">
-  <h2>Login / Signup</h2>
-
-  <input type="email" id="email" placeholder="Enter Email">
-  <input type="password" id="password" placeholder="Enter Password">
-
-  <br>
-
-  <button class="login-btn" onclick="login()">Login</button>
-  <button class="signup-btn" onclick="signup()">Sign Up</button>
+<div class="login-page">
+  <div class="login-wrap">
+    <div class="login-left">
+      <div class="login-brand">
+        <div class="login-brand-icon">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.089.537 4.049 1.475 5.754L.057 23.07a.75.75 0 00.916.914l5.34-1.406A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.944 9.944 0 01-5.065-1.377l-.364-.217-3.77.993 1.009-3.678-.237-.378A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        </div>
+        <div class="login-brand-name">Vyap<span>tech</span></div>
+      </div>
+      <div class="login-tagline">
+        <h2>WhatsApp Business<br/><span>Platform for India</span></h2>
+        <p>Bulk messaging, CRM, automation aur reseller tools — sab ek jagah.</p>
+        <div class="login-features">
+          <div class="login-feature"><div class="login-feature-dot"></div>Official Meta WhatsApp API</div>
+          <div class="login-feature"><div class="login-feature-dot"></div>Bulk Broadcast — 1L+ messages/day</div>
+          <div class="login-feature"><div class="login-feature-dot"></div>Built-in CRM & Live Chat</div>
+          <div class="login-feature"><div class="login-feature-dot"></div>White-label Reseller Program</div>
+        </div>
+      </div>
+    </div>
+    <div class="login-right">
+      <h3>Welcome back 👋</h3>
+      <p>Apne account mein login karein</p>
+      <div class="demo-box">Demo: <strong>admin@vyaptech.com</strong> / <strong>demo123</strong></div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" placeholder="aapka@email.com" id="email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••" id="password"/>
+      </div>
+      <a href="#" class="forgot">Password bhool gaye?</a>
+      <button class="login-btn" onclick="doLogin()">Login karein →</button>
+      <div class="divider"><div class="divider-line"></div><div class="divider-text">ya</div><div class="divider-line"></div></div>
+      <div class="register-link">Naya account? <a href="#">Free trial shuru karein</a></div>
+    </div>
+  </div>
 </div>
-
 <script>
-
-  // Firebase Config
-  var firebaseConfig = {
-    apiKey: "AIzaSyAjUM5w0E75_Senlu5zIxUtQOPNE6danNk",
-    authDomain: "vyaptech-saas.firebaseapp.com",
-    projectId: "vyaptech-saas",
-    storageBucket: "vyaptech-saas.firebasestorage.app",
-    messagingSenderId: "911108552998",
-    appId: "1:911108552998:web:db0c532906371181b829e7"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-
-  function signup() {
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-
-    firebase.auth().createUserWithEmailAndPassword(email, password)
-    .then(function() {
-      alert("Signup Successful!");
-    })
-    .catch(function(error) {
-      alert(error.message);
-    });
-  }
-
-  function login() {
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-    .then(function() {
-      alert("Login Successful!");
-      window.location.href = "dashboard.html";
-    })
-    .catch(function(error) {
-      alert(error.message);
-    });
-  }
-
+function doLogin(){
+  var e=document.getElementById('email').value;
+  var p=document.getElementById('password').value;
+  if(!e||!p){alert('Email aur password daalein');return;}
+  window.location.href='dashboard.html';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
 </script>
-
 </body>
 </html>
